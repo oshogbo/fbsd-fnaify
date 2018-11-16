@@ -260,19 +260,20 @@ done
 IFS=$SAVEIFS
 
 # configfilesarray: array of files in gamedir ending in '.config'
+configfilesarray=""
+nconfigfilesarray=0
 if [ -n "$FNAIFY_DEBUG" ]
 then
 	echo "Identifying config files..."
 fi
 IFS="
 "
-for cfile in $(ls "$gamedir" | grep "\.config$")
-do
-	if [ -n "$FNAIFY_DEBUG" ]
-	then
+for cfile in $(ls "$gamedir" | grep "\.config$"); do
+	if [ -n "$FNAIFY_DEBUG" ]; then
 		echo "\tfound config file: $cfile"
 	fi
-	configfilesarray[${#configfilesarray[*]} + 1]="$cfile"
+	configfilesarray="$configfilesarray$cfile "
+	nconfigfilesarray=$((nconfigfilesarray + 1))
 done
 IFS=$SAVEIFS
 if [ -n "$FNAIFY_DEBUG" ]
@@ -407,8 +408,7 @@ then
 fi
 
 # check that configfilesarray isn't empty
-if [ ${#configfilesarray[*]} < 1 ]
-then
+if [ $nconfigfilesarray < 1 ]; then
 	if [ -n "$FNAIFY_DEBUG" ]
 	then
 		echo "No config files found."
@@ -417,8 +417,7 @@ else
 	cfile=""	# empty the variable because it has been used before
 	IFS="
 	"
-	for cfile in ${configfilesarray[*]}
-	do
+	for cfile in $configfilesarray; do
 		if [ -n "$FNAIFY_DEBUG" ]
 		then
 			echo "\t$cfile"
