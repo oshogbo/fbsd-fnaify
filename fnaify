@@ -450,26 +450,18 @@ fi
 echo ""
 
 echo -n "Result of configuration testing: "
-if [ ( ${#missinglibs[*]} -gt 0 ) || ( $missingmono -gt 0 ) ]
-then
+if [ -z "${missinglibs}" -o $missingmono -gt 0 ]; then
 	echo "FAILED"
 	printdash 39
 
 	echo "The following requirements were not met:"
-	if [ $missingmono = 1 ]
-	then
+	if [ $missingmono -eq 1 ]; then
 		echo -n - -
 		echo " Could not find 'mono' in PATH"
 	fi
-	if [ ${#missinglibs[*]} > 0 ]
-	then
-		i=1
-		while [ i -le ${#missinglibs[*]} ]
-		do
-			echo -n - -
-			echo " Could not find library: ${missinglibs[i]}"
-			let i=i+1
-		done
+	if [ -z "${missinglibs}" ]; then
+		echo -n - -
+		echo " Could not find library: $missinglibs"
 	fi
 	echo ""
 	exit 1
