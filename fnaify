@@ -120,14 +120,10 @@ inarray()
 # FIXME: this won't be able to deal with whitespace at the moment
 validlib()
 {
-	ig=1
-	while [[ $ig -lt ${#ignoredarray[*]} ]]
-	do
-		if [[ $1 = ${ignoredarray[ig]} ]]
-		then
+	for ig in $ignoredarray; do
+		if [ "${ig}" = "${1}" ]; then
 			return 1
 		fi
-		let ig=ig+1
 	done
 	return 0
 }
@@ -141,47 +137,47 @@ trunklibnam()
 	echo "$libnam"
 }
 
-set -A	ignoredarray	libCSteamworks.so \
-			libsteam_api.so \
-			libSteamworksNative.so \
-			libcef.so \
-			libXNAWebRenderer.so \
-			libSteamWrapper.so \
-			libParisSteam.so \
-			steamwrapper.so \
-			libCommunityExpressSW.so \
-			libXNAFileDialog.so \
-			libfmod.so \
-			libfmodstudio.so \
-			libtiny_jpeg.so \
-			libGalaxy64.so \
-			libGalaxyCSharpGlue.so \
-			libGalaxy.so
+ignoredarray="libCSteamworks.so
+libsteam_api.so
+libSteamworksNative.so
+libcef.so
+libXNAWebRenderer.so
+libSteamWrapper.so
+libParisSteam.so
+steamwrapper.so
+libCommunityExpressSW.so
+libXNAFileDialog.so
+libfmod.so
+libfmodstudio.so
+libtiny_jpeg.so
+libGalaxy64.so
+libGalaxyCSharpGlue.so
+libGalaxy.so"
 
-set -A	monofilearray	System.dll \
-			Mono.Posix.dll \
-			Mono.Security.dll \
-			System.Configuration.dll \
-			System.Core.dll \
-			System.Data.dll \
-			System.Xml.dll \
-			System.Security.dll \
-			System.Runtime.Serialization.dll \
-			mscorlib.dll \
-			System.Drawing.dll \
-			monoconfig \
-			System.Xml.Linq.dll \
-			WindowsBase.dll \
-			monomachineconfig \
-			I18N.CJK.dll \
-			I18N.MidEast.dll \
-			I18N.Other.dll \
-			I18N.Rare.dll \
-			I18N.West.dll \
-			I18N.dll \
-			Microsoft.CSharp.dll \
-			Mono.CSharp.dll \
-			System.ServiceModel.dll
+monofilearray="System.dll
+Mono.Posix.dll
+Mono.Security.dll
+System.Configuration.dll
+System.Core.dll
+System.Data.dll
+System.Xml.dll
+System.Security.dll
+System.Runtime.Serialization.dll
+mscorlib.dll
+System.Drawing.dll
+monoconfig
+System.Xml.Linq.dll
+WindowsBase.dll
+monomachineconfig
+I18N.CJK.dll
+I18N.MidEast.dll
+I18N.Other.dll
+I18N.Rare.dll
+I18N.West.dll
+I18N.dll
+Microsoft.CSharp.dll
+Mono.CSharp.dll
+System.ServiceModel.dll"
 
 #######################################################################
 
@@ -690,22 +686,17 @@ if [ -n "$FNAIFY_DEBUG" ]
 then
 	echo -n "Moving some bundled dll files into linux-files subfolder... "
 fi
-i=0
-while [[ i -lt ${#monofilearray[*]} ]]
-do
-	if [[ -e "$gamedir/${monofilearray[i]}" ]]
-	then
-		if [ -n "$FNAIFY_DEBUG" ]
-		then
-			echo "Found bundled mono file: ${monofilearray[i]}"
+for file in $monofilearray; do
+	if [[ -e "$gamedir/$file" ]]; then
+		if [ -n "$FNAIFY_DEBUG" ]; then
+			echo "Found bundled mono file: $file"
 		fi
 		if [[ ! -e "$gamedir/linux-files" ]]
 		then
 			mkdir "$gamedir/linux-files"
 		fi
-		mv "$gamedir/${monofilearray[i]}" "$gamedir/linux-files"
+		mv "$gamedir/$file" "$gamedir/linux-files"
 	fi
-	let i=i+1
 done
 if [ -n "$FNAIFY_DEBUG" ]
 then
