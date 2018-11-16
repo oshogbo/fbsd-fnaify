@@ -397,10 +397,9 @@ debug_echo " done.\n"
 echo "Checking installed libraries..."
 
 missinglibs=""
-while [ i -le ${#needlibarray[*]} ]; do
 for needlib in ${needlibarray}; do
 	if ls /usr/local/lib | grep -q "^$needlib"; then
-		debug_echo "\tfound system lib for: ${needlibarray[i]}"
+		debug_echo "\tfound system lib for: $needlib"
 	else
 		if echo "$needlib" | grep -q 'libfreetype\.so.*' ; then
 			debug_echo "\tfound libfreetype (see /usr/X11R6/lib)"
