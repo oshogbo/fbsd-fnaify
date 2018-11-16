@@ -195,36 +195,45 @@ then
 	echo "Trying to identify the launch script file automatically..."
 fi
 
-sfile=
+scount=0
+scriptfilearray=""
+sfile=""
 IFS="
 "
 for sfile in $(find . -maxdepth 1 -type f | grep -Ev "\.[^/]|mono.*config$" | cut -f 2 -d "/")
 do
-	if [ -n "$FNAIFY_DEBUG" ]
-	then
+	if [ -n "$FNAIFY_DEBUG" ]; then
 		echo "\tfound candidate for launch script file: $sfile"
 	fi
-	scriptfilearray[${#scriptfilearray[*]} + 1]="$sfile"
+	scriptfilearray="$scriptfilearray $sfile"
+	scount=$((scount + 1))
 done
 IFS=$SAVEIFS
 
-if [ ${#scriptfilearray[*]} -gt 1 ]
-then
-	i=0
-	while [[ ++i -le ${#scriptfilearray[*]} ]]
-	#for i in {1..${#scriptfilearray[*]}}
-	do
-		echo "$i: ${scriptfilearray[i]}"
+if [ $scount -gt 1 ]; then
+	for fsc in $scriptfilearray; do
+		echo "$i: ${fsc}"
+		i=$((i + 1))
 	done
 	echo -n "Enter number of the file to use as the launch script: "
 	while [[ $input_script -lt 1 || $input_script -gt ${#scriptfilearray[*]} ]]
 	do
 		read input_script
 	done
-	scriptfile="${scriptfilearray[$input_script]}"
-elif [ ${#scriptfilearray[*]} -eq 1 ]
-then
-	scriptfile="${scriptfilearray[1]}"
+	# XXXosho: Very, very ogly... but I don't care.
+	for fsc in $scriptfilearray; do
+		echo "$i: ${fsc}"
+		if [ $i -eq $input_script ]; then
+			scriptfile="${fsc}"
+		fi
+		i=$((i + 1))
+	done
+	if [ -z "${scriptfile}" ]; then
+		echo "BAD NUMBER"
+		exit 1
+	fi
+elif [ $scount -eq 1 ]; then
+	scriptfile="$scriptfilearray"
 else
 	echo "WARNING: failed to identify a pre-existing launch script."
 	echo -n "Please enter a name for the launch script to be created: "
