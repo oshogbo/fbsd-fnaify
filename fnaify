@@ -416,14 +416,12 @@ if [ $nconfigfilesarray < 1 ]; then
 	fi
 else
 	cfile=""	# empty the variable because it has been used before
-	IFS="
-	"
 	for cfile in $configfilesarray; do
 		if [ -n "$FNAIFY_DEBUG" ]
 		then
 			echo "\t$cfile"
 		fi
-		linuxlines=$(grep "os\=\"linux" $gamedir/$cfile)
+		linuxlines=$(grep "os\=\"linux" "$gamedir/$cfile")
 		# FIXME: this sed call would probably get messed up if there is
 		#	whitespace
 		for libstring in $(echo "$linuxlines" | sed -n -E "s/.*target=\"([^\"]+).*/\1/p")
@@ -483,7 +481,6 @@ if [ -n "$FNAIFY_DEBUG" ]
 then
 	echo "Done with identification of needed libraries."
 fi
-IFS=$SAVEIFS
 
 # Fix libpngXX.so filename
 if [ -n "$FNAIFY_DEBUG" ]
@@ -510,7 +507,7 @@ while [ i -le ${#needlibarray[*]} ]; do
 	if [ $(ls /usr/local/lib | grep "^${needlibarray[i]}") != "" ];	then
 		if [ -n "$FNAIFY_DEBUG" ]
 		then
-			echo "\tfound system lib for: ${needlibarray[i]}"
+			printf "\tfound system lib for: ${needlibarray[i]}"
 		fi
 	else
 		if [ -n $(echo ${needlibarray[i]} | grep -q 'libfreetype\.so.*') ]
