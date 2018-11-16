@@ -111,8 +111,7 @@ inarray()
 {
 	firstarg="$1"
 	shift 1
-	echo "$*" | fgrep -q "$firstarg"
-	return
+	echo "$*" | grep -q "$firstarg"
 }
 
 # validlib: returns 0 unless $1 is in ignoredarray, then returns 1
@@ -253,9 +252,11 @@ fi
 fullscriptpath="`pwd`/$scriptfile"
 IFS="
 "
-for xfile in $(ls "$gamedir" | grep "\.exe$")
-do
-	exefile[${#exefile[*]} + 1]=$xfile
+exefile=""
+nexefile=0
+for xfile in $(ls "$gamedir" | grep "\.exe$"); do
+	exefile="$exefile $xfile"
+	nexefile=$((nexefile + 1))
 done
 IFS=$SAVEIFS
 
@@ -326,14 +327,14 @@ else
 		then
 			echo " -> $file"
 		fi
-		inarray $file ${needlibarray[*]}
+		inarray $file ${needlibarray}
 		if [ $? -eq 0 ]; then
 			if [ -n "$FNAIFY_DEBUG" ]
 			then
 				echo " - already in array"
 			fi
 		elif [ $? -eq 1 ]; then
-			needlibarray[${#needlibarray[*]} + 1]=$file
+			needlibarray="$needlibarray$file "
 		else
 			echo "\n\t - ERROR: inarray returned with unexpected error"
 			echo ""
@@ -377,14 +378,14 @@ else
 		then
 			echo -n " -> $file"
 		fi
-		inarray $file ${needlibarray[*]}
+		inarray $file $needlibarray
 		if [ $? -eq 0 ]; then
 			if [ -n "$FNAIFY_DEBUG" ]
 			then
 				echo " - already in array"
 			fi
 		elif [ $? -eq 1 ]; then
-			needlibarray[${#needlibarray[*]} + 1]=$file
+			needlibarray="$needlibarray$file "
 			if [ -n "$FNAIFY_DEBUG" ]
 			then
 				echo ""
@@ -454,14 +455,14 @@ else
 			#needlibarray[${#needlibarray[*]} + 1]=$libstring
 			# check if libstring is already in needlibarray.
 			# add to needlibarray only if not.
-			inarray $libstring ${needlibarray[*]}
+			inarray $libstring $needlibarray
 			if [ $? -eq 0 ]; then
 				if [ -n "$FNAIFY_DEBUG" ]
 				then
 					echo " - already in array"
 				fi
 			elif [ $? -eq 1 ]; then
-				needlibarray[${#needlibarray[*]} + 1]=$libstring
+				needlibarray="$needlibarray$libstring "
 				if [ -n "$FNAIFY_DEBUG" ]
 				then
 					echo " - added to array"
@@ -701,22 +702,31 @@ fi
 ###
 # create wrapper script in the game folder, set correct .exe in script, and set to executable
 
-if [ ${#exefile[*]} -gt 1 ]
-then
+if [ $nexefile -gt 1 ]; then
 	i=0
-	while [ ++i -le ${#exefile[*]} ]
-	do
-		echo "$i: ${exefile[i]}"
+	for ex in $exefile; do
+		echo "$i: $ex"
+		i=$((i + 1))
 	done
 	echo -n "Enter number of .exe file to choose for wrapper script: "
-	while [ $input_exe -lt 1 || $input_exe -gt ${#exefile[*]} ]
-	do
-		read input_exe
+	read input_script
+	# XXXosho: Very, very ogly... but I don't care.
+	i=0
+	for ex in $exefile; do
+		echo "$i: ${fsc}"
+		if [ $i -eq $input_script ]; then
+			selectexe="${ex}"
+			break
+		fi
+		i=$((i + 1))
 	done
-	selectexe="${exefile[$input_exe]}"
+	if [ -z "${selectexe}" ]; then
+		echo "BAD NUMBER"
+		exit 1
+	fi
 elif
 then
-	selectexe="${exefile[1]}"
+	selectexe="$exefile"
 else
 	echo "ERROR: no .exe file found"
 	echo ""
