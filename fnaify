@@ -388,11 +388,7 @@ debug_echo "Done with identification of needed libraries."
 
 # Fix libpngXX.so filename
 debug_echo -n "Fixing libpng filenames if present..."
-i=1
-while [ i -le ${#needlibarray[*]} ]; do
-	needlibarray[i]=$(echo "${needlibarray[i]}" | sed -E "s/(libpng)..(\.so.*)/\1\2/")
-	let i=i+1
-done
+needlibarray=`echo $needlibarray | sed -E "s/(libpng)..(\.so.*) /\1\2/"`
 debug_echo " done.\n"
 
 # Check if the libraries are available on the system (/usr/local/lib).
