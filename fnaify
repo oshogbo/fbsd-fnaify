@@ -99,8 +99,7 @@ fna_warning=0
 printdash()
 {
 	c=1
-	while [[ $c -le $1 ]]
-	do
+	while [ $c -le $1 ]; do
 		echo -n -
 		let c=c+1
 	done
@@ -300,8 +299,7 @@ if [ -n "$FNAIFY_DEBUG" ]
 then
 	echo ""
 fi
-if [[ ! -e "$gamedir/lib64" ]]
-then
+if [ ! -e "$gamedir/lib64" ]; then
 	if [ -n "$FNAIFY_DEBUG" ]
 	then
 		echo "Couldn't find library directory $gamedir/lib64"
@@ -315,8 +313,7 @@ else
 	do
 		# sort out libs (e.g. steam) that need to be ignored
 		validlib $file
-		if [[ $? -eq 1 ]]
-		then
+		if [ $? -eq 1 ]; then
 			continue
 		fi
 		if [ -n "$FNAIFY_DEBUG" ]
@@ -329,14 +326,12 @@ else
 			echo " -> $file"
 		fi
 		inarray $file ${needlibarray[*]}
-		if [[ $? -eq 0 ]]
-		then
+		if [ $? -eq 0 ]; then
 			if [ -n "$FNAIFY_DEBUG" ]
 			then
 				echo " - already in array"
 			fi
-		elif [[ $? -eq 1 ]]
-		then
+		elif [ $? -eq 1 ]; then
 			needlibarray[${#needlibarray[*]} + 1]=$file
 		else
 			echo "\n\t - ERROR: inarray returned with unexpected error"
@@ -355,8 +350,7 @@ if [ -n "$FNAIFY_DEBUG" ]
 then
 	echo ""
 fi
-if [[ ! -e "$gamedir/lib" ]]
-then
+if [ ! -e "$gamedir/lib" ]; then
 	if [ -n "$FNAIFY_DEBUG" ]
 	then
 		echo "Couldn't find library directory $gamedir/lib"
@@ -370,8 +364,7 @@ else
 	do
 		# sort out libs (e.g. steam) that need to be ignored
 		validlib $file
-		if [[ $? -eq 1 ]]
-		then
+		if [ $? -eq 1 ]; then
 			continue
 		fi
 		if [ -n "$FNAIFY_DEBUG" ]
@@ -384,14 +377,12 @@ else
 			echo -n " -> $file"
 		fi
 		inarray $file ${needlibarray[*]}
-		if [[ $? -eq 0 ]]
-		then
+		if [ $? -eq 0 ]; then
 			if [ -n "$FNAIFY_DEBUG" ]
 			then
 				echo " - already in array"
 			fi
-		elif [[ $? -eq 1 ]]
-		then
+		elif [ $? -eq 1 ]; then
 			needlibarray[${#needlibarray[*]} + 1]=$file
 			if [ -n "$FNAIFY_DEBUG" ]
 			then
@@ -416,7 +407,7 @@ then
 fi
 
 # check that configfilesarray isn't empty
-if [[ ${#configfilesarray[*]} < 1 ]]
+if [ ${#configfilesarray[*]} < 1 ]
 then
 	if [ -n "$FNAIFY_DEBUG" ]
 	then
@@ -448,8 +439,7 @@ else
 			fi
 			# sort out libs (e.g. steam) that need to be ignored
 			validlib $libstring
-			if [[ $? -eq 1 ]]
-			then
+			if [ $? -eq 1 ]; then
 				if [ -n "$FNAIFY_DEBUG" ]
 				then
 					echo " - ignored"
@@ -466,14 +456,12 @@ else
 			# check if libstring is already in needlibarray.
 			# add to needlibarray only if not.
 			inarray $libstring ${needlibarray[*]}
-			if [[ $? -eq 0 ]]
-			then
+			if [ $? -eq 0 ]; then
 				if [ -n "$FNAIFY_DEBUG" ]
 				then
 					echo " - already in array"
 				fi
-			elif [[ $? -eq 1 ]]
-			then
+			elif [ $? -eq 1 ]; then
 				needlibarray[${#needlibarray[*]} + 1]=$libstring
 				if [ -n "$FNAIFY_DEBUG" ]
 				then
@@ -503,8 +491,7 @@ then
 	echo -n "Fixing libpng filenames if present..."
 fi
 i=1
-while [[ i -le ${#needlibarray[*]} ]]
-do
+while [ i -le ${#needlibarray[*]} ]; do
 	needlibarray[i]=$(echo "${needlibarray[i]}" | sed -E "s/(libpng)..(\.so.*)/\1\2/")
 	let i=i+1
 done
@@ -519,10 +506,8 @@ fi
 echo "Checking installed libraries..."
 
 i=1
-while [[ i -le ${#needlibarray[*]} ]]
-do
-	if [[ $(ls /usr/local/lib | grep "^${needlibarray[i]}") != "" ]]
-	then
+while [ i -le ${#needlibarray[*]} ]; do
+	if [ $(ls /usr/local/lib | grep "^${needlibarray[i]}") != "" ];	then
 		if [ -n "$FNAIFY_DEBUG" ]
 		then
 			echo "\tfound system lib for: ${needlibarray[i]}"
@@ -556,8 +541,7 @@ then
 fi
 missingmono=0
 whence mono > /dev/null
-if [[ $? -ne 0 ]]
-then
+if [ $? -ne 0 ]; then
 	echo " Couldn't find mono in PATH"
 	missingmono=1
 else
@@ -612,21 +596,21 @@ fi
 echo ""
 
 echo -n "Result of configuration testing: "
-if [[ ( ${#missinglibs[*]} -gt 0 ) || ( $missingmono -gt 0 ) ]]
+if [ ( ${#missinglibs[*]} -gt 0 ) || ( $missingmono -gt 0 ) ]
 then
 	echo "FAILED"
 	printdash 39
 	
 	echo "The following requirements were not met:"
-	if [[ $missingmono = 1 ]]
+	if [ $missingmono = 1 ]
 	then
 		echo -n - -
 		echo " Could not find 'mono' in PATH"
 	fi
-	if [[ ${#missinglibs[*]} > 0 ]]
+	if [ ${#missinglibs[*]} > 0 ]
 	then
 		i=1
-		while [[ i -le ${#missinglibs[*]} ]]
+		while [ i -le ${#missinglibs[*]} ]
 		do
 			echo -n - -
 			echo " Could not find library: ${missinglibs[i]}"
@@ -658,8 +642,7 @@ IFS="
 "
 for file in $(ls "$gamedir" | grep "\.config$")
 do
-	if [[ ! -e "$gamedir/$file.linux" ]]
-	then
+	if [ ! -e "$gamedir/$file.linux" ]; then
 		cp -p "$gamedir/$file" "$gamedir/$file.linux"
 	fi
 done
@@ -700,11 +683,11 @@ then
 	echo -n "Moving some bundled dll files into linux-files subfolder... "
 fi
 for file in $monofilearray; do
-	if [[ -e "$gamedir/$file" ]]; then
+	if [ -e "$gamedir/$file" ]; then
 		if [ -n "$FNAIFY_DEBUG" ]; then
 			echo "Found bundled mono file: $file"
 		fi
-		if [[ ! -e "$gamedir/linux-files" ]]
+		if [ ! -e "$gamedir/linux-files" ]
 		then
 			mkdir "$gamedir/linux-files"
 		fi
@@ -719,15 +702,15 @@ fi
 ###
 # create wrapper script in the game folder, set correct .exe in script, and set to executable
 
-if [[ ${#exefile[*]} -gt 1 ]]
+if [ ${#exefile[*]} -gt 1 ]
 then
 	i=0
-	while [[ ++i -le ${#exefile[*]} ]]
+	while [ ++i -le ${#exefile[*]} ]
 	do
 		echo "$i: ${exefile[i]}"
 	done
 	echo -n "Enter number of .exe file to choose for wrapper script: "
-	while [[ $input_exe -lt 1 || $input_exe -gt ${#exefile[*]} ]]
+	while [ $input_exe -lt 1 || $input_exe -gt ${#exefile[*]} ]
 	do
 		read input_exe
 	done
