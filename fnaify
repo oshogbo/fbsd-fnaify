@@ -205,26 +205,30 @@ do
 	if [ -n "$FNAIFY_DEBUG" ]; then
 		echo "\tfound candidate for launch script file: $sfile"
 	fi
-	scriptfilearray="$scriptfilearray $sfile"
+	if [ -z "${scriptfilearray}" ]; then
+		scriptfilearray="$sfile"
+	else
+		scriptfilearray="$scriptfilearray $sfile"
+	fi
 	scount=$((scount + 1))
 done
 IFS=$SAVEIFS
 
 if [ $scount -gt 1 ]; then
+	i=0
 	for fsc in $scriptfilearray; do
 		echo "$i: ${fsc}"
 		i=$((i + 1))
 	done
 	echo -n "Enter number of the file to use as the launch script: "
-	while [[ $input_script -lt 1 || $input_script -gt ${#scriptfilearray[*]} ]]
-	do
-		read input_script
-	done
+	read input_script
 	# XXXosho: Very, very ogly... but I don't care.
+	i=0
 	for fsc in $scriptfilearray; do
 		echo "$i: ${fsc}"
 		if [ $i -eq $input_script ]; then
 			scriptfile="${fsc}"
+			break
 		fi
 		i=$((i + 1))
 	done
