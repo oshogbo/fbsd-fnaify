@@ -7,19 +7,19 @@
 # by Thomas Frohwein (thfr)
 #################
 # Script to get FNA-based games
-# ready to run on OpenBSD
+# ready to run on BSD
 #
 # FNA is a reimplementation of the Microsoft XNA Game Studio 4.0 Refresh libraries.
 # Thanks to the great work by Ethan Lee (flibitijibibo) games using FNA are
-# highly portable and can even run on OpenBSD.
+# highly portable and can even run on BSD.
 # Please refer to https://fna-xna.github.io/ for more information about FNA
 ##################
 # License: ISC license
 ##################
 # Requirements:
 #
-# - SDL2 library that identifies as 'Linux' rather than 'OpenBSD'
-#   (needs to be compiled this way; patch to recognize OpenBSD in
+# - SDL2 library that identifies as 'Linux' rather than 'BSD'
+#   (needs to be compiled this way; patch to recognize BSD in
 #   progress upstream)
 # - mono
 # - some additional libraries, like mojoshader, theorafile, etc
@@ -148,7 +148,7 @@ validlib()
 	return 0
 }
 
-# trunklibnam: truncate the name of the library (and remove '-2.0') to match OpenBSD
+# trunklibnam: truncate the name of the library (and remove '-2.0') to match BSD
 trunklibnam()
 {
 	libnam="$1"
@@ -414,7 +414,7 @@ debug_echo ""
 # Check if mono is available
 debug_echo -n "Checking that mono can be called..."
 missingmono=0
-#whereis mono > /dev/null # XXXosho: not portable ;/
+#whence mono > /dev/null # XXXosho: not portable ;/
 ls /usr/local/bin/mono > /dev/null # XXXosho: wierd idea
 if [ $? -ne 0 ]; then
 	echo " Couldn't find mono in PATH"
@@ -475,7 +475,7 @@ debug_printdash 40
 #    (this won't be needed after fna 18.01+ rolled out)
 
 echo ""
-echo "Adjusting config files for OpenBSD..."
+echo "Adjusting config files for BSD..."
 
 # create backup .linux files of the original .config files
 debug_echo -n "\t(creating copy of original config files with suffix '.linux')... "
@@ -560,7 +560,7 @@ else
 	exit 1
 fi
 
-echo "Replacing launcher script with OpenBSD variant..."
+echo "Replacing launcher script with BSD variant..."
 # if not exists, make backup of original script for linux
 debug_echo -n "\t(creating copy of original launcher script with suffix '.linux')... "
 if [ ! -e "$fullscriptpath.linux" ]
@@ -589,13 +589,13 @@ esac
 # The content of the wrapper script
 echo	"#!/bin/sh\n\
 \n\
-# fnaify wrapper script for launching FNA games on OpenBSD\n\
+# fnaify wrapper script for launching FNA games on BSD\n\
 # created by Thomas Frohwein (thfr)\n\
 \n\
 # Move to the game's location in case it was invoked from elsewhere\n\
 cd \"\`dirname \"\$0\"\`\"\n\
 \n\
-# run mono with LD_LIBRARY_PATH to find native OpenBSD libraries\n\
+# run mono with LD_LIBRARY_PATH to find native BSD libraries\n\
 LD_LIBRARY_PATH=/usr/local/lib $exe_env exec mono \"$selectexe\" $exe_flags \$*" > $fullscriptpath
 
 chmod +x "$fullscriptpath"
