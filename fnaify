@@ -340,7 +340,7 @@ libraryname "lib"
 debug_echo "Obtaining library names from the following config files"
 
 # check that configfilesarray isn't empty
-if [ $nconfigfilesarray < 1 ]; then
+if [ $nconfigfilesarray -lt 1 ]; then
 	debug_echo "No config files found."
 else
 	cfile=""	# empty the variable because it has been used before
