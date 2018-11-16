@@ -303,7 +303,7 @@ IFS="
 exefile=""
 nexefile=0
 for xfile in $(ls "$gamedir" | grep "\.exe$"); do
-	exefile="$exefile $xfile"
+	exefile="$exefile$xfile "
 	nexefile=$((nexefile + 1))
 done
 IFS=$SAVEIFS
@@ -501,7 +501,7 @@ do
 	sed -i -E 's/target=".\//target="/g' "$gamedir/$file"
 	# remove directory lib{,64} at the start of any target="..."
 	sed -i -E 's/target="lib\(64\)\//target="/g' "$gamedir/$file"
-	sed -i 's/os="linux/os="openbsd/g' "$gamedir/$file"
+	sed -i -E 's/os="linux/os="openbsd/g' "$gamedir/$file"
 	# remove suffix numbers
 #XXXosho:	sed -i -E 's/\(target="lib.*.so\)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
 	# fix SDL2 naming by removing the '-2.0'
@@ -552,7 +552,7 @@ if [ $nexefile -gt 1 ]; then
 		echo "BAD NUMBER"
 		exit 1
 	fi
-elif [ $nexefile -eq 0 ]; then
+elif [ $nexefile -eq 1 ]; then
 	selectexe="$exefile"
 else
 	echo "ERROR: no .exe file found"
@@ -587,7 +587,7 @@ case $? in
 esac
 
 # The content of the wrapper script
-echo	"#!/bin/sh\n\
+printf "#!/bin/sh\n\
 \n\
 # fnaify wrapper script for launching FNA games on BSD\n\
 # created by Thomas Frohwein (thfr)\n\
