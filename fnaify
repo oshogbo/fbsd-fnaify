@@ -414,7 +414,8 @@ debug_echo ""
 # Check if mono is available
 debug_echo -n "Checking that mono can be called..."
 missingmono=0
-whence mono > /dev/null
+#whereis mono > /dev/null # XXXosho: not portable ;/
+ls /usr/local/bin/mono > /dev/null # XXXosho: wierd idea
 if [ $? -ne 0 ]; then
 	echo " Couldn't find mono in PATH"
 	missingmono=1
