@@ -452,7 +452,7 @@ fi
 echo ""
 
 echo -n "Result of configuration testing: "
-if [ -z "${missinglibs}" -o $missingmono -gt 0 ]; then
+if [ -n "${missinglibs}" -o "${missingmono}" -eq 1 ]; then
 	echo "FAILED"
 	printdash 39
 
