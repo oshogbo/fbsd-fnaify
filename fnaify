@@ -500,12 +500,13 @@ do
 	# remove "./" at the beginning of any target="..."
 	sed -i -E 's/target=".\//target="/g' "$gamedir/$file"
 	# remove directory lib{,64} at the start of any target="..."
-	sed -i -E 's/target="lib\(64\)\//target="/g' "$gamedir/$file"
-	sed -i -E 's/os="linux/os="openbsd/g' "$gamedir/$file"
+	sed -i -E 's/target="lib64\//target="/g' "$gamedir/$file"
+	sed -i -E 's/target="lib\//target="/g' "$gamedir/$file"
+	sed -i -E 's/os="linux/os="freebsd/g' "$gamedir/$file"
 	# remove suffix numbers
-#XXXosho:	sed -i -E 's/\(target="lib.*.so\)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
+	sed -i -E 's/\(target=".*\).so.*"/\1.so"/g' "$gamedir/$file"
 	# fix SDL2 naming by removing the '-2.0'
-#XXXosho:	sed -i -E 's/(target="libSDL2.*)-2\.0(\.so.*)$/\1\2/g' "$gamedir/$file"
+	sed -i -E 's/target="libSDL2-2.0.so/target="libSDL2.so/g' "$gamedir/$file"
 	# FIXME: find out where 'dll=' is used with .so and how often
 	# 	(there was an example with libfreetype in this place somewhere)
 #XXXosho:	sed -i -E 's/(dll="lib[a-zA-Z]*\.so)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
@@ -587,16 +588,14 @@ case $? in
 esac
 
 # The content of the wrapper script
-printf "#!/bin/sh\n\
-\n\
-# fnaify wrapper script for launching FNA games on BSD\n\
-# created by Thomas Frohwein (thfr)\n\
-\n\
-# Move to the game's location in case it was invoked from elsewhere\n\
-cd \"\`dirname \"\$0\"\`\"\n\
-\n\
-# run mono with LD_LIBRARY_PATH to find native BSD libraries\n\
-LD_LIBRARY_PATH=/usr/local/lib $exe_env exec mono \"$selectexe\" $exe_flags \$*" > $fullscriptpath
+cat <<EOF > $fullscriptpath
+#!/bin/sh
+
+# fnaify wrapper script for launching FNA games on BSD
+
+# run mono with LD_LIBRARY_PATH to find native BSD libraries
+LD_LIBRARY_PATH=/usr/local/lib $exe_env mono $selectexe $exe_flags \$*
+EOF
 
 chmod +x "$fullscriptpath"
 
