@@ -95,6 +95,28 @@ fna_warning=0
 #                 needlibarray
 #missinglibs[*] accumulates missing library names to inform user
 
+debug_echo()
+{
+	if [ -z "$FNAIFY_DEBUG" ]; then
+		return
+	fi
+
+	if [ $1 = '-n' ]; then
+		printf "$2"
+	else
+		printf "$1\n"
+	fi
+}
+
+debug_printdash()
+{
+	if [ -z "$FNAIFY_DEBUG" ]; then
+		return
+	fi
+
+	printdash $*
+}
+
 # printdash: print $1 number of dashes in one line, followed by newline
 printdash()
 {
