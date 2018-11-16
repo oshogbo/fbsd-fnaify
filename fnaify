@@ -101,7 +101,7 @@ debug_echo()
 		return
 	fi
 
-	if [ $1 = '-n' ]; then
+	if [ "${1}" = '-n' ]; then
 		printf "$2"
 	else
 		printf "$1\n"
@@ -497,17 +497,17 @@ for file in $(ls "$gamedir" | grep "\.config$")
 do
 	# someone may be able to provide a more compact solution for this section
 	# remove "./" at the beginning of any target="..."
-	sed -i -E 's/(.*target=")\.\/(.*)$/\1\2/g' "$gamedir/$file"
+	sed -i -E 's/target=".\//target="/g' "$gamedir/$file"
 	# remove directory lib{,64} at the start of any target="..."
-	sed -i -E 's/(.*target=")lib(64)?\/(.*)$/\1\3/g' "$gamedir/$file"
+	sed -i -E 's/target="lib\(64\)\//target="/g' "$gamedir/$file"
 	sed -i 's/os="linux/os="openbsd/g' "$gamedir/$file"
 	# remove suffix numbers
-	sed -i -E 's/(target="lib.*.so)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
+#XXXosho:	sed -i -E 's/\(target="lib.*.so\)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
 	# fix SDL2 naming by removing the '-2.0'
-	sed -i -E 's/(target="libSDL2.*)-2\.0(\.so.*)$/\1\2/g' "$gamedir/$file"
+#XXXosho:	sed -i -E 's/(target="libSDL2.*)-2\.0(\.so.*)$/\1\2/g' "$gamedir/$file"
 	# FIXME: find out where 'dll=' is used with .so and how often
 	# 	(there was an example with libfreetype in this place somewhere)
-	sed -i -E 's/(dll="lib[a-zA-Z]*\.so)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
+#XXXosho:	sed -i -E 's/(dll="lib[a-zA-Z]*\.so)[\.0-9]*(.*)$/\1\2/g' "$gamedir/$file"
 done
 IFS=$SAVEIFS
 debug_echo "Config files adjusted."
@@ -551,8 +551,7 @@ if [ $nexefile -gt 1 ]; then
 		echo "BAD NUMBER"
 		exit 1
 	fi
-elif
-then
+elif [ $nexefile -eq 0 ]; then
 	selectexe="$exefile"
 else
 	echo "ERROR: no .exe file found"
