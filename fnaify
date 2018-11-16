@@ -396,20 +396,19 @@ debug_echo " done.\n"
 # If not, break and inform user which libraries need to be installed.
 echo "Checking installed libraries..."
 
-i=1
+missinglibs=""
 while [ i -le ${#needlibarray[*]} ]; do
-	if [ $(ls /usr/local/lib | grep "^${needlibarray[i]}") != "" ];	then
+for needlib in ${needlibarray}; do
+	if ls /usr/local/lib | grep -q "^$needlib"; then
 		debug_echo "\tfound system lib for: ${needlibarray[i]}"
 	else
-		if [ -n $(echo ${needlibarray[i]} | grep -q 'libfreetype\.so.*') ]
-		then
+		if echo "$needlib" | grep -q 'libfreetype\.so.*' ; then
 			debug_echo "\tfound libfreetype (see /usr/X11R6/lib)"
 		else
-			debug_echo "\tNot found: ${needlibarray[i]}"
-			missinglibs[${#missinglibs[*]} + 1]=${needlibarray[i]}
+			debug_echo "\tNot found: $needlib"
+			missinglibs="$missinglibs$needlib "
 		fi
 	fi
-	let i=i+1
 done
 debug_echo ""
 
@@ -425,13 +424,10 @@ else
 fi
 
 # check version of framework library (FNA.dll or MonoGame.Framework.dll)
-if [ $missingmono -lt 1 ]
-then
-
+if [ $missingmono -lt 1 ]; then
 	debug_echo "Checking version of framework library..."
 	# FIXME: the following code assumes that only one of FNA.dll and MonoGame.Framework.dll is present
-	if [ -e "$gamedir/FNA.dll" ]
-	then
+	if [ -e "$gamedir/FNA.dll" ]; then
 		fnaversion=`monodis --assembly "$gamedir/FNA.dll" | grep "Version" | tr -d [:alpha:] | tr -d " " | tr -d \:`
 		fnamajor=`echo "$fnaversion" | sed -n -E "s/\..*//p"`
 		fnaminor=`echo "$fnaversion" | sed -n -E "s/[0-9]+\.([0-9]+)\.[0-9]+\.[0-9]+/\1/p"`
