@@ -123,7 +123,7 @@ printdash()
 	c=1
 	while [ $c -le $1 ]; do
 		echo -n -
-		let c=c+1
+		c=$((c+1))
 	done
 	echo ""
 }
