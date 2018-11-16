@@ -157,6 +157,40 @@ trunklibnam()
 	echo "$libnam"
 }
 
+
+libraryname()
+{
+	version="$1"
+
+	debug_echo ""
+	if [ ! -e "$gamedir/$version" ]; then
+		debug_echo "Couldn't find library directory $gamedir/$version"
+	else
+		debug_echo "Entering library directory $gamedir/$version"
+		for file in $(ls "$gamedir/$version"); do
+			# sort out libs (e.g. steam) that need to be ignored
+			validlib $file
+			if [ $? -eq 1 ]; then
+				continue
+			fi
+			debug_echo -n "\tfound library file: $file"
+			file=$(trunklibnam "$file")
+			debug_echo " -> $file"
+			inarray $file ${needlibarray}
+			if [ $? -eq 0 ]; then
+				debug_echo " - already in array"
+			elif [ $? -eq 1 ]; then
+				needlibarray="$needlibarray$file "
+			else
+				echo "\n\t - ERROR: inarray returned with unexpected error"
+				echo ""
+				exit 1
+			fi
+		done
+		debug_echo "Done with library directory $gamedir/$version"
+	fi
+}
+
 ignoredarray="libCSteamworks.so
 libsteam_api.so
 libSteamworksNative.so
@@ -297,65 +331,10 @@ debug_echo "Done identifying config files.\n"
 debug_echo "Identifying libraries required by the game..."
 debug_printdash 45
 
-# get library names from lib64 folder
-debug_echo ""
-if [ ! -e "$gamedir/lib64" ]; then
-	debug_echo "Couldn't find library directory $gamedir/lib64"
-else
-	debug_echo "Entering library directory $gamedir/lib64"
-	for file in $(ls "$gamedir/lib64"); do
-		# sort out libs (e.g. steam) that need to be ignored
-		validlib $file
-		if [ $? -eq 1 ]; then
-			continue
-		fi
-		debug_echo -n "\tfound library file: $file"
-		file=$(trunklibnam "$file")
-		debug_echo " -> $file"
-		inarray $file ${needlibarray}
-		if [ $? -eq 0 ]; then
-			debug_echo " - already in array"
-		elif [ $? -eq 1 ]; then
-			needlibarray="$needlibarray$file "
-		else
-			echo "\n\t - ERROR: inarray returned with unexpected error"
-			echo ""
-			exit 1
-		fi
-	done
-	debug_echo "Done with library directory $gamedir/lib64"
-fi
-
-# get library names from lib folder
-debug_echo ""
-if [ ! -e "$gamedir/lib" ]; then
-	debug_echo "Couldn't find library directory $gamedir/lib"
-else
-	debug_echo "Entering library directory $gamedir/lib"
-	for file in $(ls "$gamedir/lib")
-	do
-		# sort out libs (e.g. steam) that need to be ignored
-		validlib $file
-		if [ $? -eq 1 ]; then
-			continue
-		fi
-		debug_echo -n "\tfound library file: $file"
-		file=$(trunklibnam "$file")
-		debug_echo -n " -> $file"
-		inarray $file $needlibarray
-		if [ $? -eq 0 ]; then
-			debug_echo " - already in array"
-		elif [ $? -eq 1 ]; then
-			needlibarray="$needlibarray$file "
-			debug_echo ""
-		else
-			echo "\n\t - ERROR: inarray returned with unexpected error"
-			echo ""
-			exit 1
-		fi
-	done
-	debug_echo "Done with library directory $gamedir/lib"
-fi
+# get library names from lib64 and lib folder
+needlibarray=""
+libraryname "lib64"
+libraryname "lib"
 
 # get library names from .config files
 debug_echo "Obtaining library names from the following config files"
