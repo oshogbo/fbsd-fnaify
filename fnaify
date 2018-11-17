@@ -275,7 +275,6 @@ if [ $scount -gt 1 ]; then
 	# XXXosho: Very, very ogly... but I don't care.
 	i=0
 	for fsc in $scriptfilearray; do
-		echo "$i: ${fsc}"
 		if [ $i -eq $input_script ]; then
 			scriptfile="${fsc}"
 			break
@@ -542,7 +541,6 @@ if [ $nexefile -gt 1 ]; then
 	# XXXosho: Very, very ogly... but I don't care.
 	i=0
 	for ex in $exefile; do
-		echo "$i: ${fsc}"
 		if [ $i -eq $input_script ]; then
 			selectexe="${ex}"
 			break
