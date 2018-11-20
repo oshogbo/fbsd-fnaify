@@ -3,14 +3,18 @@ fnaify 1.1-fbsd
 
 created 2017-12-27
 by Thomas Frohwein (thfr)
+
 FreeBSD version 2018
 by Mariusz Zaborski (oshogbo@)
 
 Note:
 -----
 Please notice that this is an unofficial fork of the fnity implemented by Thomas Frohwein.
-The ordinal source code: https://thfr.info/cgi-bin/cvsweb/projects/fnaify/
+
+The orginal source code: https://thfr.info/cgi-bin/cvsweb/projects/fnaify/
+
 The goal of this fork is to port the OpenBSD version of this script to FreeBSD.
+
 For more details: https://oshogbo.vexillium.org/blog/58/
 
 Intro:
